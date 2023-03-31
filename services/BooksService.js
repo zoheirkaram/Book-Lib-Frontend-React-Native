@@ -1,43 +1,42 @@
 import { AppSettings } from "../constants/Settings";
-
-async function getBookByGenreId (genreId) {
-   let response = await fetch(`${AppSettings.BaseURL}/genre/${genreId}`);
-   let data = await response.json();
-
-   return data;
-}
+import * as API from "./APIService";
 
 export async function getBookListByGenreId (genreId) {
-   let response = await fetch(`${AppSettings.BaseURL}/list/genre/${genreId}`);
-   let data = await response.json();
-
-   return data;
-}
-
-export async function getAllBooks() {
-   let response = await fetch(`${AppSettings.BaseURL}`);
-   let data = await response.json();
-
-   return data;
+   return API.get(`${AppSettings.BooksURL}/list/genre/${genreId}`);
 }
 
 export async function getAllGenres() {
-   let response = await fetch(`${AppSettings.BaseURL}/genres`)
-   let data = await response.json();
+   return API.get(`${AppSettings.GenresURL}`);
+}
 
-   return data;
+export async function AddGenre(genre) {
+   return API.put(`${AppSettings.GenresURL}`, genre);
+}
+
+export async function AddBook(book) {
+   return API.put(`${AppSettings.BooksURL}`, book);
+}
+
+export async function getAllAuthors() {
+   return API.get(`${AppSettings.AuthorsURL}`);
+}
+
+export async function AddAuthor(author) {
+   return API.put(`${AppSettings.AuthorsURL}`, author);
+}
+
+export async function AddPublisher(publisher) {
+   return API.put(`${AppSettings.PublisherURL}`, publisher);
+}
+
+export async function getAllPublishers() {
+   return API.get(`${AppSettings.PublisherURL}`);
 }
 
 export async function getImagesByBookId(bookId) {
-   let response = await fetch(`${AppSettings.BaseURL}/images/${bookId}`);
-   let data = await response.json();
-
-   return data;
+   return API.get(`${AppSettings.BaseURL}/images/${bookId}`);
 }
 
 export async function getOpenLibraryBookDetails(isbn) {
-   let response = await fetch(`${AppSettings.BaseURL}/openlibrary/${isbn}`);
-   let data = await response.json();
-
-   return data;
+   return API.get(`${AppSettings.BooksURL}/openlibrary/${isbn}`);
 }

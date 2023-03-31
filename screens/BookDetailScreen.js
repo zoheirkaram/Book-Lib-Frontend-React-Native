@@ -34,14 +34,14 @@ const BookDetailScreen = ({ route, navigation }) => {
 
    if (isLoading) {
       return (
-         <SafeAreaView className="bg-white pt-5 flex-1 justify-center flex-row">
+         <SafeAreaView className="bg-white flex-1 justify-center flex-row">
             <ActivityIndicator size="large" color={Color.Primary}></ActivityIndicator>
          </SafeAreaView>
       );
    } else {
       return (
-         <SafeAreaView className="bg-white pt-5">
-            <View className="flex-row pd-3 pb-3 items-center space-x-2">
+         <SafeAreaView className="bg-white">
+            <View className="flex-row p-4 items-center space-x-2">
                <ChevronLeftIcon
                   size={35}
                   color={Color.Primary}
