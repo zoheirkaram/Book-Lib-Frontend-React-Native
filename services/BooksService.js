@@ -40,3 +40,7 @@ export async function getImagesByBookId(bookId) {
 export async function getOpenLibraryBookDetails(isbn) {
    return API.get(`${AppSettings.BooksURL}/openlibrary/${isbn}`);
 }
+
+export async function getBookListBySearchTerm(searchTerm){
+   return API.get(`${AppSettings.BooksURL}/search/${searchTerm}`);
+}

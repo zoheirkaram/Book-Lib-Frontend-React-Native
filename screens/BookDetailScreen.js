@@ -29,8 +29,8 @@ const BookDetailScreen = ({ route, navigation }) => {
          });
    }, []);
 
-   const placesChips = bookDetails?.places?.slice(0, 5)?.map((place, index) => <Chip containerStyle={{ margin: 1, alignItems: "center", width: 150 }} title={place.name} key={index}></Chip>);
-   const peopleChips = bookDetails?.people?.slice(0, 5)?.map((person, index) => <Chip containerStyle={{ margin: 1, alignItems: "center", width: 150 }} title={person.name} key={index}></Chip>);
+   const placesChips = bookDetails?.places?.filter((item) => item?.name.length < 15)?.slice(0, 4)?.map((place, index) => <Chip containerStyle={{ margin: 1, alignItems: "center", width: 150 }} title={place.name} key={index}></Chip>);
+   const peopleChips = bookDetails?.people?.filter((item) => item?.name.length < 15)?.slice(0, 4)?.map((person, index) => <Chip containerStyle={{ margin: 1, alignItems: "center", width: 150 }} title={person.name} key={index}></Chip>);
 
    if (isLoading) {
       return (
@@ -63,7 +63,7 @@ const BookDetailScreen = ({ route, navigation }) => {
                <OpenURLButton url={bookDetails?.infoURL} buttonStyle={{ marginTop: 15, borderRadius: 25, width: 200, backgroundColor: Color.Primary }}>
                   Read More
                </OpenURLButton>
-               <View className="flex-row">
+               <View className="flex-row m-0">
                   <View>
                      <Card>
                         <Card.Title style={{ fontWeight: "500" }}>Places</Card.Title>
