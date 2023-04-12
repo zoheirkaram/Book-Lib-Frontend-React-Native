@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import { Animated, Text } from "react-native";
 
-const Toast = (props) => {
+export default function Toast (props) {
 
    const opacity = useRef(new Animated.Value(0)).current;
 
@@ -19,7 +19,7 @@ const Toast = (props) => {
             useNativeDriver: true
          })
       ]).start(() => {
-         props.OnHide();
+         props.onHide();
       })
    },[]);
 
@@ -29,7 +29,7 @@ const Toast = (props) => {
          transform: [{
             translateY: opacity.interpolate({
                inputRange: [0, 1],
-               outputRange: [-20, 0]
+               outputRange: [-20, 20]
             })
          }],
          margin: 10,
@@ -51,4 +51,3 @@ const Toast = (props) => {
    );
 }
 
-export default Toast;

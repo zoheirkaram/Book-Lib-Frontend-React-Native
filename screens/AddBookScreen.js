@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
-import { View, Text, TextInput, StyleSheet, Modal } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
+import { View, Text, TextInput, StyleSheet, Modal, Alert } from "react-native";
 import { Button } from "@rneui/themed";
 import { Dropdown } from "react-native-element-dropdown";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ChevronLeftIcon, PlusCircleIcon } from "react-native-heroicons/outline";
 import Color from "../constants/Colors";
-import { getAllGenres, getAllPublishers, getAllAuthors, AddBook, AddGenre, AddAuthor, AddPublisher } from "../services/BooksService";
+import { getAllGenres, getAllPublishers, getAllAuthors, AddBook, AddGenre, AddAuthor, AddPublisher, EditBook } from "../services/BooksService";
+import Toast from "../components/Toast";
 
 const ModalPopup = ({ visible, children }) => {
    return (
@@ -43,6 +44,9 @@ const ModalContent = ({ title, visibleSetter, saveHandler }) => {
 };
 
 const AddBookScreen = ({ route, navigation }) => {
+
+   let { bookData } = route.params;
+
    useLayoutEffect(() => {
       navigation.setOptions({
          headerShown: false,
@@ -55,6 +59,9 @@ const AddBookScreen = ({ route, navigation }) => {
       getPublishers();
    }, []);
 
+   const [saveDisabled, setSaveDisabled] = useState(false);
+   const [messages, setMessages] = useState([]);
+
    let [genres, setGenres] = useState([]);
    let [authors, setAuthors] = useState([]);
    let [publishers, setPublishers] = useState([]);
@@ -63,13 +70,13 @@ const AddBookScreen = ({ route, navigation }) => {
    let [authorModalVisible, setAuthorModalVisible] = useState(false);
    let [publisherModalVisible, setPublisherModalVisible] = useState(false);
 
-   let [bookName, setBookName] = useState("");
-   let [description, setDescription] = useState("");
-   let [isbn, setIsbn] = useState("");
+   let [bookName, setBookName] = useState(bookData?.book?.title);
+   let [description, setDescription] = useState(bookData?.book?.description);
+   let [isbn, setIsbn] = useState(bookData?.book?.isbn);
    let [imageUrl, setImageUrl] = useState("");
-   let [selectedGenre, setSelectedGenre] = useState();
-   let [selectedAuthor, setSelectedAuthor] = useState();
-   let [selectedPublisher, setSelectedPublisher] = useState();
+   let [selectedGenre, setSelectedGenre] = useState(bookData?.book?.genre);
+   let [selectedAuthor, setSelectedAuthor] = useState(bookData?.authors && bookData?.authors[0]);
+   let [selectedPublisher, setSelectedPublisher] = useState(bookData?.book?.publisher);
 
    const getGenres = () => {
       getAllGenres()
@@ -101,8 +108,23 @@ const AddBookScreen = ({ route, navigation }) => {
          });
    };
 
+   const resetBook = () => {
+      bookData = {}
+      
+      setBookName("");
+      setDescription("");
+      setIsbn("");
+      setImageUrl("");
+      setSelectedGenre();
+      setSelectedAuthor();
+      setSelectedPublisher();
+   };
+
    const saveBook = () => {
+      setSaveDisabled(true);
+
       let data = {
+         BookId: bookData?.book?.bookId,
          Title: bookName,
          Description: description,
          ISBN: isbn,
@@ -111,13 +133,47 @@ const AddBookScreen = ({ route, navigation }) => {
          AuthorId: selectedAuthor?.authorId,
       };
 
-      AddBook(data)
-         .then((result) => {
-            console.log(result);
-         })
-         .catch((error) => {
-            console.log(error);
-         });
+      if (bookData) {
+         EditBook(data)
+            .then((result) => {
+               Alert.alert(
+                  'Info',
+                  'New book saved successfully'
+               );
+            })
+            .catch((error) => {
+               Alert.alert(
+                  'Error',
+                  'Cannot save new book please check logs'
+               );
+
+               console.log(error);
+            })
+            .finally(() => {
+               setSaveDisabled(false);
+            });
+      }
+      else {
+         AddBook(data)
+            .then((result) => {
+               resetBook();
+               Alert.alert(
+                  'Info',
+                  'New book saved successfully'
+               );
+            })
+            .catch((error) => {
+               Alert.alert(
+                  'Error',
+                  'Cannot save new book please check logs'
+               );
+
+               console.log(error);
+            })
+            .finally(() => {
+               setSaveDisabled(false);
+            });
+      }
    };
 
    const saveNewGenre = (genre) => {
@@ -137,6 +193,7 @@ const AddBookScreen = ({ route, navigation }) => {
 
       AddGenre({ Title: genre })
          .then((result) => {
+            setMessages([...messages, `${genre} added successfully`]);
             setSelectedGenre({ genreId: result, title: genre });
             getGenres();
          })
@@ -203,6 +260,23 @@ const AddBookScreen = ({ route, navigation }) => {
 
    return (
       <SafeAreaView>
+         {/* <View
+            style={{
+               position: "absolute",
+               top: 45,
+               left: 0,
+               right: 0,
+            }}>
+            {messages?.map((message) => (
+               <Toast
+                  key={message}
+                  message={message}
+                  onHide={() => {
+                     setMessages((messages) => messages?.filter((currentMessage) => currentMessage !== message));
+                  }}
+               />
+            ))}
+         </View> */}
          <ModalPopup visible={genreModalVisible}>
             <ModalContent title={"Add New Genre"} visibleSetter={setGenreModalVisible} saveHandler={saveNewGenre} />
          </ModalPopup>
@@ -222,7 +296,7 @@ const AddBookScreen = ({ route, navigation }) => {
             />
             <View className="flex-1">
                <Text className="font-bold text-xl" style={{ color: Color.Primary }}>
-                  Add Book
+                  { Object.keys(bookData).length == 0 ? 'Add Book' : 'Edit Book' }
                </Text>
             </View>
          </View>
@@ -302,8 +376,8 @@ const AddBookScreen = ({ route, navigation }) => {
          </View>
 
          <View className="flex-row items-center justify-center">
-            <Button title="Save" buttonStyle={styles.button} containerStyle={styles.buttonContainer} onPress={() => saveBook()}></Button>
-            <Button title="Reset" buttonStyle={styles.button} containerStyle={styles.buttonContainer} onPress={() => {}}></Button>
+            <Button title="Save" buttonStyle={styles.button} containerStyle={styles.buttonContainer} onPress={() => saveBook()} disabled={saveDisabled}></Button>
+            <Button title="Reset" buttonStyle={styles.button} containerStyle={styles.buttonContainer} onPress={() => resetBook()}></Button>
          </View>
       </SafeAreaView>
    );
@@ -314,7 +388,7 @@ export default AddBookScreen;
 const styles = StyleSheet.create({
    dropdownContainer: {
       flexDirection: "row",
-      alignItems: "center"
+      alignItems: "center",
    },
    dropdown: {
       flex: 1,
@@ -345,19 +419,17 @@ const styles = StyleSheet.create({
       paddingVertical: 6,
       backgroundColor: Color.Primary,
       borderRadius: 10,
-      shadowColor: "#ddd",
-      shadowOpacity: 0.5,
+   },
+   buttonContainer: {
+      width: 120,
+      marginHorizontal: 10,
+      marginVertical: 20,
    },
    dialogButton: {
       paddingHorizontal: 8,
       paddingVertical: 6,
       backgroundColor: Color.Secondary,
       borderRadius: 10,
-   },
-   buttonContainer: {
-      width: 120,
-      marginHorizontal: 10,
-      marginVertical: 20,
    },
    modalBackground: {
       flex: 1,

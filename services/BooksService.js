@@ -17,6 +17,10 @@ export async function AddBook(book) {
    return API.put(`${AppSettings.BooksURL}`, book);
 }
 
+export async function EditBook(book) {
+   return API.post(`${AppSettings.BooksURL}`, book);
+}
+
 export async function getAllAuthors() {
    return API.get(`${AppSettings.AuthorsURL}`);
 }

@@ -19,7 +19,7 @@ const HomeScreen = () => {
    }, []);
 
    function gotoAddBook() {
-      navigation.navigate('Add Book');
+      navigation.navigate('Add Book', {bookData: {}});
    }
 
    const handelSearchTerm = (search) => {
