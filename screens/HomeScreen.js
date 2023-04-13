@@ -39,8 +39,8 @@ const HomeScreen = () => {
             <PlusCircleIcon size={35} color={Color.Secondary} onPress={() => gotoAddBook()}/>
          </View>
          <View className="flex-row items-center space-x-2 pb-2 mx-4">
-            <View className="flex-row flex-1 space-x-2 bg-gray-200 p-2">
-               <TextInput className="flex-1" placeholder="Search your library ..." keyboard="default" onChangeText={search => handelSearchTerm(search)} value={searchTerm}/>
+            <View className="flex-row flex-1 space-x-2 bg-gray-200 p-2 rounded-lg">
+               <TextInput className="flex-1" placeholder="Search books and authors ..." keyboard="default" onChangeText={search => handelSearchTerm(search)} value={searchTerm}/>
             </View>            
          </View>
          <ScrollView className="bg-gray-100"

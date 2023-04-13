@@ -18,7 +18,6 @@ export default function BookSearch ({searchTerm}) {
          })
    }, [searchTerm]);
 
-   console.log(bookList);
    const booksCards = bookList?.map((bookData) => <BookCard bookData={bookData} key={bookData.bookDataId}></BookCard>);
 
   return (

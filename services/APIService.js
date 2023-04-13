@@ -7,6 +7,8 @@ export async function get(url) {
 }
 
 export async function post(url, object) {
+   console.log(url, object);
+
    let request = {
       method: "POST",
       body: JSON.stringify(object),
@@ -23,6 +25,8 @@ export async function post(url, object) {
 }
 
 export async function put(url, object) {
+   console.log(url, object);
+
    let request = {
       method: "PUT",
       body: JSON.stringify(object),

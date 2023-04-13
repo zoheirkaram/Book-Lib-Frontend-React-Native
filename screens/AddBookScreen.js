@@ -124,7 +124,7 @@ const AddBookScreen = ({ route, navigation }) => {
       setSaveDisabled(true);
 
       let data = {
-         BookId: bookData?.book?.bookId,
+         BookId: Object.keys(bookData).length > 0 ? bookData?.book?.bookId : 0,
          Title: bookName,
          Description: description,
          ISBN: isbn,
@@ -133,7 +133,10 @@ const AddBookScreen = ({ route, navigation }) => {
          AuthorId: selectedAuthor?.authorId,
       };
 
-      if (bookData) {
+      console.log(data)
+      
+      if (Object.keys(bookData).length > 0) {
+         console.log('Editing section')
          EditBook(data)
             .then((result) => {
                Alert.alert(
@@ -154,6 +157,7 @@ const AddBookScreen = ({ route, navigation }) => {
             });
       }
       else {
+         console.log('Adding section')
          AddBook(data)
             .then((result) => {
                resetBook();
@@ -301,13 +305,13 @@ const AddBookScreen = ({ route, navigation }) => {
             </View>
          </View>
          <View className="flex-row px-4 py-2">
-            <TextInput onChangeText={setBookName} value={bookName} placeholder="Book Name" className="bg-white p-1 flex-1"></TextInput>
+            <TextInput onChangeText={setBookName} value={bookName} placeholder="Book Name" className="bg-white p-1 flex-1 rounded-lg"></TextInput>
          </View>
          <View className="flex-row px-4 py-2">
-            <TextInput onChangeText={setDescription} value={description} placeholder="Description" numberOfLines={3} maxLength={100} className="bg-white p-1 flex-1"></TextInput>
+            <TextInput onChangeText={setDescription} value={description} placeholder="Description" numberOfLines={3} maxLength={100} className="bg-white p-1 flex-1 rounded-lg"></TextInput>
          </View>
          <View className="flex-row px-4 py-2">
-            <TextInput onChangeText={setIsbn} value={isbn} placeholder="ISBN" className="bg-white p-1 flex-1"></TextInput>
+            <TextInput onChangeText={setIsbn} value={isbn} placeholder="ISBN" className="bg-white p-1 flex-1 rounded-lg"></TextInput>
          </View>
          <View style={styles.dropdownContainer}>
             <Dropdown
@@ -372,7 +376,7 @@ const AddBookScreen = ({ route, navigation }) => {
             <PlusCircleIcon size={35} color={Color.Secondary} style={{ marginRight: 16 }} onPress={() => setPublisherModalVisible(true)} />
          </View>
          <View className="flex-row px-4 py-2">
-            <TextInput onChangeText={setImageUrl} value={imageUrl} placeholder="Image URL" className="bg-white p-1 flex-1"></TextInput>
+            <TextInput onChangeText={setImageUrl} value={imageUrl} placeholder="Image URL" className="bg-white p-1 flex-1 rounded-lg"></TextInput>
          </View>
 
          <View className="flex-row items-center justify-center">
@@ -399,6 +403,8 @@ const styles = StyleSheet.create({
       borderBottomWidth: 0.5,
       backgroundColor: "white",
       paddingLeft: 4,
+      borderRadius: 8
+
    },
    icon: {
       marginRight: 5,
@@ -413,6 +419,7 @@ const styles = StyleSheet.create({
    inputSearchStyle: {
       height: 40,
       fontSize: 16,
+      borderRadius: 10
    },
    button: {
       paddingHorizontal: 8,
